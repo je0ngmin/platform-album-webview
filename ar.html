@@ -10,7 +10,7 @@
 
     <a-scene mindar-image="imageTargetSrc: targets.mind;" embedded>
       <a-assets>
-        <video id="video1" src="video.mp4"></video>
+        <video id="video1" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" muted></video>
       </a-assets>
   
       <!-- 반드시 anchor 안에 들어가야 함 -->
@@ -27,7 +27,7 @@
     </a-scene>
 
     <script>
-      const video = document.querySelector("#video");
+      const video = document.querySelector("#video1");
       document.addEventListener("targetFound", () => video.play());
       document.addEventListener("targetLost", () => video.pause());
     </script>
