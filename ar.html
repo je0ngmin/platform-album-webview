@@ -1,58 +1,28 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MindAR - Image target video overlay</title>
+  <head>
+    <script src="https://unpkg.com/aframe"></script>
+    <script src="https://unpkg.com/mind-ar/dist/mindar-image-aframe.prod.js"></script>
+  </head>
+  <body style="margin:0">
+    <video id="video" src="video.mp4" loop muted playsinline></video>
 
-  <!-- A-Frame -->
-  <script src="https://unpkg.com/aframe@1.4.2/dist/aframe.min.js"></script>
-  <!-- MindAR A-Frame 빌드 -->
-  <script src="https://unpkg.com/mind-ar@1.1.4/dist/mindar-image-aframe.prod.js"></script>
-  <!-- (버전은 예시입니다. 최신은 문서 확인) -->
-</head>
-<body>
-  <!-- 비디오: muted+playsinline을 넣어야 모바일에서 자동 재생이 가능할 확률이 높습니다 -->
-  <video id="ar-video" src="video.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous"></video>
+    <a-scene mindar-image="imageTargetSrc: targets.mind;" embedded>
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-plane 
+          src="#video" 
+          width="1" height="0.56"
+          rotation="-90 0 0">
+        </a-plane>
+      </a-entity>
+      <a-camera></a-camera>
+    </a-scene>
 
-  <a-scene
-    mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1;"
-    vr-mode-ui="enabled: false"
-    embedded
-    device-orientation-permission-ui="enabled: false"
-  >
-    <a-entity mindar-image-target="targetIndex: 0">
-      <!-- 평면을 카메라에서 약간 띄워서(회전/포지션 보정) 타깃 위에 겹치게 합니다 -->
-      <a-plane id="videoPlane"
-               position="0 0 0"
-               rotation="-90 0 0"
-               width="1.0"
-               height="0.56"
-               material="shader: flat; src: #ar-video; transparent: true;">
-      </a-plane>
-    </a-entity>
-
-    <!-- 카메라(마인드AR이 자체 카메라 엔티티를 관리) -->
-    <a-entity camera></a-entity>
-  </a-scene>
-
-  <script>
-    const video = document.querySelector("#ar-video");
-    const targetEntity = document.querySelector("[mindar-image-target]");
-
-    // targetFound / targetLost 이벤트로 비디오 제어
-    targetEntity.addEventListener("targetFound", (e) => {
-      // 모바일 자동재생 이슈: muted가 없으면 재생 안될 수 있음
-      video.currentTime = 0;
-      video.play().catch(err => console.log("play error:", err));
-    });
-
-    targetEntity.addEventListener("targetLost", (e) => {
-      video.pause();
-    });
-
-    // MindAR 세션 시작/정지 제어(선택)
-    // a-scene 내부에서도 mindar-start 이벤트를 사용할 수 있음
-  </script>
-</body>
+    <script>
+      const video = document.querySelector("#video");
+      document.addEventListener("targetFound", () => video.play());
+      document.addEventListener("targetLost", () => video.pause());
+    </script>
+  </body>
 </html>
